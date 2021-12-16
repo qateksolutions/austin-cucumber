@@ -1,6 +1,8 @@
 package utilities;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -17,6 +19,7 @@ public class DriverFactory {
         // Empty constructor
     }
 
+    private static final Logger LOGGER = LogManager.getLogger(DriverFactory.class);
     private static final DriverFactory instance = new DriverFactory();
 
     public static DriverFactory getInstance() {
@@ -30,20 +33,25 @@ public class DriverFactory {
 
         try {
             gridUrl = new URL(ReadConfigFiles.getPropertyValues("GridURL"));
+            LOGGER.info("Selenium Grid URL:" + gridUrl);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
 
         if (environment.equals("remote") && browser.equals("chrome")) {
+            LOGGER.info("Executing the automation scripts in Selenium Grid using Chrome");
             ChromeOptions chromeOptions = new ChromeOptions();
             return new RemoteWebDriver(gridUrl, chromeOptions);
         } else if (environment.equals("remote") && browser.equals("firefox")) {
+            LOGGER.info("Executing the automation scripts in Selenium Grid using firefox");
             FirefoxOptions firefoxOptions = new FirefoxOptions();
             return new RemoteWebDriver(gridUrl, firefoxOptions);
         } else if (environment.equals("remote") && browser.equals("edge")) {
+            LOGGER.info("Executing the automation scripts in Selenium Grid using edge");
             EdgeOptions edgeOptions = new EdgeOptions();
             return new RemoteWebDriver(gridUrl, edgeOptions);
         } else {
+            LOGGER.info("Executing the automation scripts in local using Chrome");
             WebDriverManager.chromedriver().setup();
             return new ChromeDriver();
         }
